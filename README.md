@@ -11,6 +11,6 @@ Then all you need to do is connect to the IP, enter the Bravia's IP and pre-shar
 From there, you should be able to view all available information, and execute commands if you wish.
 
 ## BraviaInfo Example
-![https://github.com/JacksonVD/BraviaInfo/blob/master/SampleImage.png]
+![Example](https://github.com/JacksonVD/BraviaInfo/blob/master/SampleImage.png)
 
 
