@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Use UTF-8, and define viewport -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width">
+    <!-- References to Bootstrap CSS, JQuery -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <title>Sony Bravia TV Information</title>
+</head>
+
+<body>
+    <!-- Centre everything! -->
+    <div class="container text-center">
+
+        <!-- Information relating to the page -->
+        <br>
+
+        <h1 align="center">Sony Bravia TV Information</h1>
+
+        <small>Gets some information about the current state of Bravia TVs<br>
+               <b>NOTE: </b> requires a pre-shared key to be set on the TV for command execution
+        </small>
+        <br>
+        <br>
+
+        <!-- Power on/off button -->
+        <form action="{% url 'power_change' %}" method="GET">
+            <input class="btn btn-info pull-right" type="submit" value="Power on/off"/>
+            <input type="hidden" name="tvinfo" value={{ request.get_full_path }}/>
+        </form>
+        <br>
+
+        <!-- Gather the current source, current volume, current time, model info and network info -->
+        <p>{{ getSource }}  <br>
+           {{ getVolume }}  <br>
+           {{ getTime }}    <br>
+           {{ getModel }}   <br>
+           {{ getNetwork }} <br>
+        </p>
+
+        <!-- Row made up of two tables, side by side -->
+        <div class="row">
+
+            <!-- Use cod-md-6 to take up half the view -->
+            <div class="col-md-6 justify-content-md-start">
+
+                <!-- Table to display all available applications -->
+                <h4 class="sub-header">Available applications</h4>
+
+                <!-- Toggle table view -->
+                <button href="#Apps" class="btn btn-default" data-toggle="collapse">Show applications</button>
+
+                <!-- The table itself -->
+                <div id="Apps" class="collapse in table-responsive" align="center">
+                    <br>
+                   {{ getApplications | safe }}
+                </div>
+            </div>
+
+            <!-- Use cod-md-6 to take up the other half of the view -->
+            <div class="col-md-6 justify-content-md-end">
+
+                <!-- Table to display all available external sources -->
+                <h4 class="sub-header" align="center">Available inputs</h4>
+
+                <!-- Toggle table view -->
+                <button href="#Inputs" class="btn btn-default"  data-toggle="collapse">Show inputs</button>
+
+                <!-- The table itself -->
+                <div id="Inputs" class="collapse in" align="center">
+                    <br>
+                    {{ getAll | safe }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Another row for two tables -->
+        <div class="row">
+            <!-- Use cod-md-6 to take up the other half of the view -->
+            <div class="col-md-6 justify-content-md-start">
+                <br>
+
+                <!-- Table to display all available channels -->
+                <h4 class="sub-header" align="center">Available TV channels</h4>
+
+                <!-- Toggle table view -->
+                <button href="#Channels" class="btn btn-default"  data-toggle="collapse">Show channels</button>
+
+                <!-- The table itself -->
+                <div id="Channels" class="collapse in" align="center">
+                    <br>
+                    {{ getTV | safe }}
+                </div>
+            </div>
+
+            <!-- Use cod-md-6 to take up the other half of the view -->
+            <div class="col-md-6 justify-content-md-end">
+
+                <br>
+
+                <!-- List all available IRCC commands (friendly names) -->
+                <h4 class="sub-header" align="center">Available IRCC commands</h4>
+
+                <!-- Toggle table view -->
+                <button href="#Controls" class="btn btn-default" data-toggle="collapse">Show commands</button>
+
+                <!-- The table itself -->
+                <div id="Controls" class="collapse in table-responsive" align="center">
+                    <br>
+                   {{ getControls | safe }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Use col-md-6 to restrict the size of the input boxes -->
+        <div class="container col-md-6">
+            <br>
+            <br>
+            <h2>Execute commands</h2>
+
+            <p></p>
+            <p></p>
+
+            <!-- Execute volume adjustments -->
+            <h5 class="text-left">Adjust volume</h5>
+
+            <!-- POST to volinput URL with the volume request -->
+            <form action="{% url 'vol_change' %}" method="POST" class="text-right">
+                {% csrf_token %}
+                <input type="number" name="volinput" class="form-control" placeholder="Enter new volume or +/-"/>
+                <br>
+                <input type="submit" value="Execute" class="btn btn-primary">
+                <input type="hidden" name="tvinfo" value={{ request.get_full_path }}/>
+            </form>
+
+            <p></p>
+            <p></p>
+
+            <!-- Execute source changes -->
+            <h5 class="text-left">Select a source</h5>
+
+            <!-- POST to source select URL with external source URI -->
+            <form action="{% url 'source_select' %}" method="POST" class="text-right">
+                {% csrf_token %}
+                <input type="text" name="newsource" class="form-control"
+                       placeholder="Enter source URI (channel or external source)"/>
+                <br>
+                <input type="submit" value="Execute" class="btn btn-primary">
+                <input type="hidden" name="tvinfo" value={{ request.get_full_path }}/>
+            </form>
+
+            <p></p>
+            <p></p>
+
+            <!-- Execute applications -->
+            <h5 class="text-left">Run an app</h5>
+
+            <!-- POST to app select URL with application URI -->
+            <form action="{% url 'app_select' %}" method="POST" class="text-right">
+                {% csrf_token %}
+                <input type="text" name="newapp" class="form-control" placeholder="Enter app URI"/>
+                <br>
+                <input type="submit" value="Execute" class="btn btn-primary">
+                <input type="hidden" name="tvinfo" value={{ request.get_full_path }}/>
+            </form>
+
+            <p></p>
+            <p></p>
+
+            <!-- Execute IRCC commands via friendly names from earlier table -->
+            <h5 class="text-left">Run IP-IRCC commands (separated by commas)</h5>
+
+            <!-- POST to send ircc URL with ircc friendly name (converted in backend) -->
+            <form action="{% url 'send_ircc' %}" method="POST" class="text-right">
+                {% csrf_token %}
+                <input type="text" name="newircc" class="form-control"
+                       placeholder="Enter an IRCC command name from the table above"/>
+                <br>
+                <input type="submit" value="Execute" class="btn btn-primary">
+                <input type="hidden" name="tvinfo" value={{ request.get_full_path }}/>
+            </form>
+
+            <!-- Execute keyboard commands -->
+            <h5 class="text-left">Type in to software keyboard</h5>
+
+            <!-- POST to send keyboard URL with keyboard commands -->
+            <form action="{% url 'send_keyboard' %}" method="POST" class="text-right">
+                {% csrf_token %}
+                <input type="text" name="kbcommand" class="form-control"
+                       placeholder="Enter a string to input into the keyboard"/>
+                <br>
+                <input type="submit" value="Execute" class="btn btn-primary">
+                <input type="hidden" name="tvinfo" value={{ request.get_full_path }}/>
+            </form>
+        </div>
+    </div>
+    <br>
+
+    <footer class="section footer-classic context-dark bg-image col-md-12" style="background: #007bff;">
+        <!-- Copyright -->
+        <div class="text-center text-light">
+            <a href="https://github.com/jacksonvd" class="text-light">Jackson Van Dyke, 2018</a>
+        </div>
+    </footer>
+</body>
+</html>

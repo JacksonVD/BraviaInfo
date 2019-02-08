@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Use UTF-8, and define viewport !-->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width">
+    <!-- References to Bootstrap CSS, JQuery !-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <title>Sony Bravia TV Information</title>
+</head>
+
+<body>
+    <!-- Centre everything! !-->
+    <div class="container text-center">
+
+        <br>
+
+        <h1 align="center">Sony Bravia TV Information</h1>
+
+        <small>Gets some information about the current state of Bravia TVs<br>
+               <b>NOTE: </b> requires a pre-shared key to be set on the TV for command execution
+        </small>
+        <br>
+        <br>
+
+        {% if messages %}
+        {% for msg in messages %}
+                <div class="alert alert-danger col-md-6 justify-content-center container">
+                <strong>Error: </strong>{{msg.message}}
+                </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="col-md-6 container">
+         <!-- POST to tvinfo URL with IP and PSK !-->
+            <form action="{% url 'tvinfo' %}" method="GET" class="text-right">
+                <h5 class="text-left">Enter IP</h5>
+                <input type="text" name="IP" class="form-control" placeholder="127.0.0.1"/>
+                <br>
+                <h5 class="text-left">Enter Pre-Shared Key</h5>
+                <input type="text" name="PSK" class="form-control" placeholder="1234"/>
+                <br>
+                <input type="submit" value="Query TV" class="btn btn-primary">
+            </form>
+    </div>
+    </div>
+
+
+</body>
+    <footer class="section footer-classic context-dark bg-image col-md-12 fixed-bottom" style="background: #007bff;">
+        <!-- Copyright -->
+        <div class="text-center text-light">
+            <a href="https://github.com/jacksonvd" class="text-light">Jackson Van Dyke, 2018</a>
+        </div>
+    </footer>
+</html>
